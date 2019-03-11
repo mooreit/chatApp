@@ -6,9 +6,6 @@ def Main():
     host = socket.gethostname()		        
     port = 5000		                
 
-    #print type(sock) ============> 'type' can be used to see type 
-                    # of any variable ('sock' here)
-
     serverSock.bind((host,port))
     print("Server started")
     while True:
