@@ -1,20 +1,24 @@
-# client.py  
+
 import socket
 
-# create a socket object
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+def Main():
+    sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) 
 
-# get local machine name
-host = socket.gethostname()                           
+    host = socket.gethostname()		# Host IP
+    port = 5001	        # specified port to connect
 
-port = 9999
+    server = (host,5000)
 
-# connection to hostname on the port.
-s.connect((host, port))                               
+    sock.bind((host,port))
 
-# Receive no more than 1024 bytes
-tm = s.recv(1024)                                     
+    msg = input("-> ")
+    while msg !='q':
+        sock.sendto(msg.encode('utf-8'),server)
+        data, addr = sock.recvfrom(1024)
+        data = data.decode('utf-8')
+        print("Receive from server: " + data)
+        msg = input("->")
+    sock.close()
 
-s.close()
-
-print("The time got from the server is %s" % tm.decode('ascii'))
+if __name__ == '__main__':
+    Main()
