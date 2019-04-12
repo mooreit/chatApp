@@ -6,14 +6,7 @@ from simplecrypt import encrypt, decrypt
 cipher_key = 'secret ingredient'
 
 # COLORED TEXT FUNCTIONS
-def prRed(skk): print("\033[91m {}\033[00m" .format(skk)) 
-def prGreen(skk): print("\033[92m {}\033[00m" .format(skk)) 
-def prYellow(skk): print("\033[93m {}\033[00m" .format(skk)) 
-def prLightPurple(skk): print("\033[94m {}\033[00m" .format(skk)) 
-def prPurple(skk): print("\033[95m {}\033[00m" .format(skk)) 
-def prCyan(skk): print("\033[96m {}\033[00m" .format(skk)) 
-def prLightGray(skk): print("\033[97m {}\033[00m" .format(skk)) 
-def prBlack(skk): print("\033[98m {}\033[00m" .format(skk)) 
+def prGreen(skk): print("\033[92m {}\033[00m" .format(skk))
 
 connected_list =[]
 
@@ -22,15 +15,15 @@ def main():
     global connected_list
     #dictionary to store socket object and uniqure ID corresponding to address
     connected_dict = {}
-    
-    
+
+
     buffer = 4096
     port = 5001
-    
+
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(("localhost", port))
-    server_socket.listen(10) 
-    
+    server_socket.listen(10)
+
     # List to keep track of socket descriptors
     connected_list = [server_socket]
 
@@ -43,12 +36,12 @@ def main():
             if sock == server_socket:
                 #Accept new connection:
                 new_sock, address = server_socket.accept()
-                
+
                 #Recive name from new connected client & assign unique ID with random_num + name
                 name = new_sock.recv(buffer)
                 name = decrypt(cipher_key, name)
                 name = name.decode('ascii')
-                
+
                 #assign unique_ID:
                 random_num = generate_random_number(3) #Generate random string number with length 7
                 unique_ID = random_num + '[' + name + ']'
@@ -59,33 +52,33 @@ def main():
                 connected_dict[address]= [new_sock,unique_ID]
 
                 print("Client \033[96m{}\033[00m with addess {} connected.".format(unique_ID,address))
-                tem_msg = "\33[32m\r\33[1m Welcome to chatApp. Enter 'exit' anytime to exit\n\33[0m"
+                tem_msg = "\33[32m\r\33[1m Welcome to chatApp. Enter '.exit' anytime to exit\n\33[0m"
                 tem_msg_encrypted = encrypt(cipher_key, tem_msg)
                 #new_sock.send(tem_msg.encode("ascii"))
                 new_sock.send(tem_msg_encrypted)
-                
+
                 # list of online clients (unique_ID)
                 online_clients = online_list(connected_dict)
                 online_clients_string = '  '.join(online_clients)
                 # Send client their unique ID
                 ID_notification_msg = "\033[96m {}\033[00m" .format("Your ID is "+ unique_ID + "\nConnected client: " + online_clients_string +"\n")
-                #ID_notification_msg = "\033[96m {}\033[00m" .format("Your ID is "+ unique_ID +"\n") 
+                #ID_notification_msg = "\033[96m {}\033[00m" .format("Your ID is "+ unique_ID +"\n")
                 ID_notification_msg_encrypted = encrypt(cipher_key,ID_notification_msg)
                 #new_sock.send(ID_notification_msg.encode('ascii'))
                 new_sock.send(ID_notification_msg_encrypted)
-                
+
                 message = "\033[95m " + unique_ID + " joined the room\n\033[00m"
                 #message_encrypted = encrypt(cipher_key,message)
                 send_to_all(new_sock, server_socket, message.encode("ascii"))
                 #send_to_all(new_sock, server_socket, message_encrypted)
-                
+
 
             #Handle message from other clients:
             else:
-                
+
                 data1 = sock.recv(buffer)
                 data_list = pickle.loads(data1) #list = ["message","uniqueID"]
-                
+
                 #Find address of the client
                 address = sock.getpeername()
 
@@ -107,7 +100,7 @@ def main():
                         sock.send(msg_encrypted)
 
                 # handle when client exit:
-                elif len(data_list) == 1 and data_list[0] == "exit":
+                elif len(data_list) == 1 and data_list[0] == ".exit":
                     sender_ID = get_unique_ID(address, connected_dict)
                     msg="\r\33[1m"+"\33[31m "+sender_ID+" left the conversation \33[0m\n"
                     #send_to_all(sock,server_socket, msg.encode('ascii'))
@@ -125,10 +118,10 @@ def main():
                     msg="\r\33[1m"+"\33[35m " + sender_ID +": "+"\33[0m"+data_list[0]+"\n"
                     #send_to_all(sock,server_socket, msg.encode('ascii'))
                     send_to_all(sock,server_socket, msg)
-    
+
     server_socket.close()
 
-    
+
 
 def get_unique_ID(add,dict):
     value = dict[add]
