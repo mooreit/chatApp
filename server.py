@@ -18,7 +18,7 @@ def main():
 
 
     buffer = 4096
-    port = 5001
+    port = 5000
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(("localhost", port))
@@ -43,7 +43,7 @@ def main():
                 name = name.decode('ascii')
 
                 #assign unique_ID:
-                random_num = generate_random_number(3) #Generate random string number with length 7
+                random_num = generate_random_number(3) #Generate random string number with length 3
                 unique_ID = random_num + '[' + name + ']'
 
                 #add new socket to connected list

@@ -20,7 +20,7 @@ def main():
     else:
         host = sys.argv[1]
 
-    port = 5001
+    port = 5000
 
     #asks for user name
     prCyan("CREATING NEW ID")
